@@ -2,10 +2,10 @@
 Mamba-Client
 ================
 
-.. image:: https://api.travis-ci.org/barracuda-project/barracuda.svg?branch=master
-   :target: https://travis-ci.org/github/barracuda-project/barracuda/builds
-.. image:: https://img.shields.io/codecov/c/github/barracuda-project/barracuda/master.svg
-   :target: https://codecov.io/github/barracuda-project/barracuda?branch=master
+.. image:: https://api.travis-ci.org/mamba-framework/mamba-client.svg?branch=master
+   :target: https://travis-ci.org/github/mamba-framework/mamba-client/builds
+.. image:: https://img.shields.io/codecov/c/github/mamba-framework/mamba-client/master.svg
+   :target: https://codecov.io/github/mamba-framework/mamba-client?branch=master
    :alt: Coverage report
 .. image:: https://img.shields.io/badge/license-%20MIT-blue.svg
    :target: ../master/LICENSE
