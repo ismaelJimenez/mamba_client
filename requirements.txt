@@ -1,0 +1,7 @@
+pytest
+pycodestyle
+codecov
+pytest-cov
+setuptools
+wheel
+twine

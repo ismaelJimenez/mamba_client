@@ -1,0 +1,35 @@
+sudo: false
+language:
+  - python
+services:
+  - xvfb
+python:
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
+before_install:
+  - sudo apt-get install -y libdbus-1-3 libxkbcommon-x11-0
+install:
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+script:
+  - pycodestyle mamba_server
+  - pytest --cov-config=.coveragerc --cov=mamba_server --verbose --capture=no tests
+  - pip install .
+after_success:
+  - codecov
+notifications:
+  email: false
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: __token__
+  password:
+    secure: FeOu/Q+uwoxFL7BI6ihxpngcfhjjgHBTANnIgI1gNnVYutkrYZMO6tyWg8Zv+F+GsQefng5PUcTpyH4h/dxu+7FN84K1+g9h6qTSIeKhfZ5hvCEODdtvWq6fl21YKdNyGKfUFnX/BOMyEZU/EHOUIWTdjoWJ+tEpSHydIUqfX6oXakXBfNtO5Qbqeqx64XIK39FBkIMRUUjuY8/o1smPeOJyTAouAVb0alneFIcSI1wNfOWZVOVktzd4NuikrLs8LZQCG4yksbzt2JDZIMs9CrYFFiOGnL9We2owyn2lsfmrneQMtlgzNjRUtUb793ylefaaP7bBrTnba6VWXs9X+5eTnmB2fMshKw8dFC4wfTyOuTh8vj3Vd7vFcje3kVf5ccFfDMOS6VQVliWlpCe1HSmGfAZOjvF/oyu3k3Au5ISmquTnYEC3PVA73YSfWMJPak/36RASv6a6sEd44tumHiZzVD5r7CWIP32YS87pUz/6FhI4Dr9Ec/zkYzhVWHmj2Ab/YMRXIgkYlDNBrNIz5FWJ52zajTlzygIRbR95wMvgyHJSBHmTRGin5eyn9/TIt6r2ZsI+fC9BKF//5bFo4BKMRw3XJSM7/CbFc4as7mSLg3wXMJfOe+oo9qxlYjeZxMWjvQjwHzSddiKYOGN3BXpTquwwW08+FQ2bZJEE6kI=
+  on:
+    tags: true
+    repo: mamba-framework/mamba-server
