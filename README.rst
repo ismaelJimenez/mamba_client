@@ -19,7 +19,7 @@ Show how to structure a Python project.
 Requirements
 ============
 
-* Python 3.5+
+* Python 3.6+
 * Works on Linux, Windows, macOS, BSD
 
 Install
