@@ -1,7 +1,9 @@
-pytest
+pytest==5.4.3
 pycodestyle
 codecov
 pytest-cov
 setuptools
 wheel
 twine
+yapf
+mypy
