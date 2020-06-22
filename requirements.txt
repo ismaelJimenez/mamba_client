@@ -7,3 +7,4 @@ wheel
 twine
 yapf
 mypy
+pylint
