@@ -12,7 +12,8 @@ class NetworkController:
     def query(self, msg: str) -> str:
         self._inst.write(f'{msg}{eom}'.encode('ascii'))
         reply = self._inst.read_until(
-            f'{eom}'.encode('ascii'))[:-2].decode('ascii').split(' ', 2)[1:]
+            f'{eom}'.encode('ascii'))[:-2].decode('ascii').rstrip().split(
+                ' ', 2)[1:]
 
         if reply[0] != 'OK':
             raise MambaClientException(' '.join(reply))
