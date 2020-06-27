@@ -42,8 +42,10 @@ class Instrument:
         if parameter_id in self._parameters:
             raise KeyError(f'Duplicate parameter name {parameter_id}')
 
-        get_alias = get_alias if get_alias is not None else f'{self._id}_{parameter_id}'
-        set_alias = set_alias if set_alias is not None else f'{self._id}_{parameter_id}'
+        get_alias = get_alias if get_alias is not None else \
+            f'{self._id}_{parameter_id}'
+        set_alias = set_alias if set_alias is not None else \
+            f'{self._id}_{parameter_id}'
 
         self._parameters[parameter_id] = Parameter(
             parameter_id=parameter_id,
@@ -67,7 +69,8 @@ class Instrument:
         if parameter_id in self._parameters:
             raise KeyError(f'Duplicate parameter name {parameter_id}')
 
-        get_alias = get_alias if get_alias is not None else f'{self._id}_{parameter_id}'
+        get_alias = get_alias if get_alias is not None else \
+            f'{self._id}_{parameter_id}'
 
         self._parameters[parameter_id] = Parameter(
             parameter_id=parameter_id,
@@ -92,7 +95,8 @@ class Instrument:
         if parameter_id in self._parameters:
             raise KeyError(f'Duplicate parameter name {parameter_id}')
 
-        set_alias = set_alias if set_alias is not None else f'{self._id}_{parameter_id}'
+        set_alias = set_alias if set_alias is not None else \
+            f'{self._id}_{parameter_id}'
 
         self._parameters[parameter_id] = Parameter(
             parameter_id=parameter_id,
