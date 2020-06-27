@@ -98,6 +98,11 @@ class TestClass:
         assert inst.test_7._set._arg_1 == 2
         assert inst.test_7._set._arg_2 is None
 
+        with pytest.raises(AttributeError) as excinfo:
+            inst.test_8
+
+        assert str(excinfo.value) == 'inst_1 instrument has no property test_8'
+
         network_controller.close()
 
     def test_parameter_call(self):

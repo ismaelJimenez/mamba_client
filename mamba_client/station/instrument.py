@@ -16,8 +16,7 @@ class Instrument:
             return self._parameters[parameter_id]
         except KeyError:
             raise AttributeError(
-                f'{type(self).__name__} object has no attribute {parameter_id}'
-            )
+                f'{self._id} instrument has no property {parameter_id}')
 
     @property
     def id(self) -> str:
