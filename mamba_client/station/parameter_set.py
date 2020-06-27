@@ -1,7 +1,7 @@
 from typing import Optional, Any
 
-from mamba_client.core.network_controller import NetworkController
-from mamba_client.core.exceptions import ParameterSetException
+from mamba_client.station import NetworkController
+from mamba_client.station.exceptions import ParameterSetException
 
 
 class ParameterSet:

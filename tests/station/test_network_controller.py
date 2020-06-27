@@ -1,9 +1,9 @@
 import pytest
 import time
 
-from mamba_client.core.network_controller import NetworkController
+from mamba_client.station import NetworkController
 from mamba_client.mock.mamba_server_mock import MambaServerMock
-from mamba_client.core.exceptions import MambaClientException
+from mamba_client.station.exceptions import MambaClientException
 
 
 class TestClass:

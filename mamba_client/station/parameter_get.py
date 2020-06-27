@@ -1,4 +1,4 @@
-from mamba_client.core.network_controller import NetworkController
+from mamba_client.station import NetworkController
 
 
 class ParameterGet:
@@ -11,7 +11,7 @@ class ParameterGet:
         self._network_controller.query(f'tm_meta {self._parameter_id}').split(
             ";")
 
-    def __call__(self) -> None:
+    def __call__(self) -> str:
         reply = self._network_controller.query(
             f'tm {self._parameter_id}').split(";")
 

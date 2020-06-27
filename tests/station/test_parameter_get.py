@@ -1,5 +1,4 @@
-from mamba_client.core.network_controller import NetworkController
-from mamba_client.core.parameter_get import ParameterGet
+from mamba_client.station import NetworkController, ParameterGet
 from mamba_client.mock.mamba_server_mock import MambaServerMock
 
 

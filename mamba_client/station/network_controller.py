@@ -1,6 +1,6 @@
 import telnetlib
 
-from mamba_client.core.exceptions import MambaClientException
+from mamba_client.station.exceptions import MambaClientException
 
 eom = '\r\n'
 

@@ -1,9 +1,8 @@
 import pytest
 
-from mamba_client.core.network_controller import NetworkController
-from mamba_client.core.parameter import Parameter
+from mamba_client.station import NetworkController, Parameter
 from mamba_client.mock.mamba_server_mock import MambaServerMock
-from mamba_client.core.exceptions import ParameterSetException
+from mamba_client.station.exceptions import ParameterSetException
 
 
 class TestClass:
@@ -18,7 +17,10 @@ class TestClass:
 
         assert param._parameter_id == 'test_1'
         assert param._get is not None
+        assert param._get._parameter_id == 'test_1_get'
         assert param._set is not None
+        assert param._set._parameter_id == 'test_1_set'
+        assert param.id == 'test_1'
 
         param = Parameter(parameter_id='test_1',
                           network_controller=network_controller,
@@ -27,6 +29,7 @@ class TestClass:
         assert param._parameter_id == 'test_1'
         assert param._get is None
         assert param._set is not None
+        assert param.id == 'test_1'
 
         param = Parameter(parameter_id='test_1',
                           network_controller=network_controller,
@@ -35,6 +38,7 @@ class TestClass:
         assert param._parameter_id == 'test_1'
         assert param._get is not None
         assert param._set is None
+        assert param.id == 'test_1'
 
         network_controller.close()
 
@@ -75,6 +79,8 @@ class TestClass:
                           get_alias='test_2_get',
                           set_alias='test_2_set',
                           set_arg_2='22')
+
+        assert param.id == 'test_2'
 
         reply = param.get()
 

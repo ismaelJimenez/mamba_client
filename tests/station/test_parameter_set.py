@@ -1,9 +1,8 @@
 import pytest
 
-from mamba_client.core.network_controller import NetworkController
-from mamba_client.core.parameter_set import ParameterSet
+from mamba_client.station import NetworkController, ParameterSet
 from mamba_client.mock.mamba_server_mock import MambaServerMock
-from mamba_client.core.exceptions import ParameterSetException, MambaClientException
+from mamba_client.station.exceptions import ParameterSetException, MambaClientException
 
 
 class TestClass:

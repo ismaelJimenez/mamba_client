@@ -1,8 +1,6 @@
 from typing import Optional, Any
 
-from mamba_client.core.network_controller import NetworkController
-from mamba_client.core.parameter_set import ParameterSet
-from mamba_client.core.parameter_get import ParameterGet
+from mamba_client.station import NetworkController, ParameterSet, ParameterGet
 
 
 class Parameter:
@@ -43,12 +41,12 @@ class Parameter:
         """ ID of the parameter """
         return self._parameter_id
 
-    def get(self):
-        if self._get is not None:
-            return self._get()
+    def get(self) -> str:
+        if self._get is None:
+            raise RuntimeError(
+                f'Parameter {self._parameter_id} GET command is not defined.')
 
-        raise RuntimeError(
-            f'Parameter {self._parameter_id} GET command is not defined.')
+        return self._get()
 
     def set(self,
             arg_1: Optional[Any] = None,
@@ -60,10 +58,10 @@ class Parameter:
             arg_7: Optional[Any] = None,
             arg_8: Optional[Any] = None,
             arg_9: Optional[Any] = None,
-            arg_10: Optional[Any] = None):
-        if self._set is not None:
-            return self._set(arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7,
-                             arg_8, arg_9, arg_10)
+            arg_10: Optional[Any] = None) -> None:
+        if self._set is None:
+            raise RuntimeError(
+                f'Parameter {self._parameter_id} SET command is not defined.')
 
-        raise RuntimeError(
-            f'Parameter {self._parameter_id} SET command is not defined.')
+        self._set(arg_1, arg_2, arg_3, arg_4, arg_5, arg_6, arg_7, arg_8,
+                  arg_9, arg_10)
