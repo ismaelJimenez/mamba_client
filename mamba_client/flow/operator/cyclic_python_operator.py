@@ -37,8 +37,7 @@ class CyclicPythonOperator:
         if not callable(python_callable):
             raise MambaFlowException(
                 f'Operator {operator_id} python_callable param must be '
-                f'callable'
-            )
+                f'callable')
 
         if log is not None and not callable(log):
             raise MambaFlowException(
@@ -64,6 +63,10 @@ class CyclicPythonOperator:
     def upstream(self):
         return None
 
+    @property
+    def status(self):
+        return self._lifecycle
+
     def ready(self, iteration: int,
               operators_lifecycle: Dict[str, OperatorLifecycle]) -> bool:
         if self._lifecycle == OperatorLifecycle.success:
@@ -78,18 +81,14 @@ class CyclicPythonOperator:
 
     def execute(self, iteration: int) -> OperatorLifecycle:
         if self._log is not None:
-            self._log(
-                f'[INFO] [{time.strftime("%Y%m%dT%H%M%S")}] '
-                f'[{self._operator_id}] Start Operator Execution'
-            )
+            self._log(f'[INFO] [{time.strftime("%Y%m%dT%H%M%S")}] '
+                      f'[{self._operator_id}] Start Operator Execution')
 
         self._callable(iteration, self._station, self._context, self._op_args)
 
         if self._log is not None:
-            self._log(
-                f'[INFO] [{time.strftime("%Y%m%dT%H%M%S")}] '
-                f'[{self._operator_id}] Stop Operator Execution'
-            )
+            self._log(f'[INFO] [{time.strftime("%Y%m%dT%H%M%S")}] '
+                      f'[{self._operator_id}] Stop Operator Execution')
 
         if self._schedule_end is not None and self._schedule_end < iteration:
             self._lifecycle = OperatorLifecycle.success
