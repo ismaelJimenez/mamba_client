@@ -1,7 +1,8 @@
+import time
+
 from typing import Optional, Any, Union, Dict, Callable
 
 from mamba_client.flow.operator.lifecycle import OperatorLifecycle
-from mamba_client.log import log_info
 from mamba_client.flow.exceptions import MambaFlowException
 from mamba_client.station.station import Station
 
@@ -15,7 +16,8 @@ class PythonOperator:
                  context: Optional[Dict] = None,
                  station: Optional[Station] = None,
                  op_args: Optional[Any] = None,
-                 description: str = '') -> None:
+                 description: str = '',
+                 log: Optional[Callable] = None) -> None:
         if upstream is not None and schedule is not None:
             raise MambaFlowException(
                 f'Operator {operator_id} can not have schedule and upstream')
@@ -31,7 +33,13 @@ class PythonOperator:
 
         if not callable(python_callable):
             raise MambaFlowException(
-                '"python_callable" param must be callable')
+                f'Operator {operator_id} python_callable param must be '
+                f'callable'
+            )
+
+        if log is not None and not callable(log):
+            raise MambaFlowException(
+                f'Operator {operator_id} log param must be callable')
 
         self._operator_id = str(operator_id)
         self._callable = python_callable
@@ -41,11 +49,16 @@ class PythonOperator:
         self._upstream = upstream
         self._description = description
         self._op_args = op_args
+        self._log = log
         self._lifecycle = OperatorLifecycle.no_status
 
     @property
     def id(self):
         return self._operator_id
+
+    @property
+    def upstream(self):
+        return self._upstream
 
     def ready(self, iteration: int,
               operators_lifecycle: Dict[str, OperatorLifecycle]) -> bool:
@@ -60,9 +73,19 @@ class PythonOperator:
                 else False
 
     def execute(self, iteration: int) -> OperatorLifecycle:
-        log_info(self._operator_id, 'Start Task Execution')
+        if self._log is not None:
+            self._log(
+                f'[INFO] [{time.strftime("%Y%m%dT%H%M%S")}] '
+                f'[{self._operator_id}] Start Operator Execution'
+            )
+
         self._callable(iteration, self._station, self._context, self._op_args)
-        log_info(self._operator_id, 'Stop Task Execution')
+
+        if self._log is not None:
+            self._log(
+                f'[INFO] [{time.strftime("%Y%m%dT%H%M%S")}] '
+                f'[{self._operator_id}] Stop Operator Execution'
+            )
 
         self._lifecycle = OperatorLifecycle.success
 

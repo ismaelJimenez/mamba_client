@@ -120,7 +120,8 @@ class TestClass:
                            schedule=0,
                            python_callable='text')
 
-        assert str(excinfo.value) == '"python_callable" param must be callable'
+        assert str(excinfo.value
+                   ) == 'Operator op_1 python_callable param must be callable'
 
         with pytest.raises(MambaFlowException) as excinfo:
             PythonOperator(
@@ -139,3 +140,24 @@ class TestClass:
 
         assert str(excinfo.value
                    ) == 'Operator op_1 schedule must be a positive integer'
+
+        operator = PythonOperator(
+            operator_id='op_1',
+            schedule=0,
+            python_callable=lambda it, st, cxt, args: cb.test_func_1(it),
+            log=lambda _: cb.test_func_2(_))
+
+        operator.execute(0)
+
+        assert len(cb.func_2_calls) == 2
+        assert '[op_1] Start Operator Execution' in cb.func_2_calls[0]
+        assert '[op_1] Stop Operator Execution' in cb.func_2_calls[1]
+
+        with pytest.raises(MambaFlowException) as excinfo:
+            PythonOperator(
+                operator_id='op_1',
+                schedule=0,
+                python_callable=lambda it, st, cxt, args: cb.test_func_1(it),
+                log='')
+
+        assert str(excinfo.value) == 'Operator op_1 log param must be callable'
