@@ -2,7 +2,6 @@ import pytest
 
 from mamba_client.station import NetworkController, Station
 from mamba_client.mock.mamba_server_mock import MambaServerMock
-from mamba_client.station.exceptions import ParameterSetException
 
 
 class TestClass:
