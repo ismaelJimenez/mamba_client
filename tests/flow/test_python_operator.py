@@ -19,13 +19,11 @@ class TestClass:
 
         assert operator.ready(0, {})
         assert operator._lifecycle == OperatorLifecycle.no_status
-        assert cb.func_1_times_called == 0
-        assert cb.func_1_last_value is None
+        assert cb.func_1_calls == []
 
-        operator.run(0)
+        operator.execute(0)
 
-        assert cb.func_1_times_called == 1
-        assert cb.func_1_last_value == 0
+        assert cb.func_1_calls == [0]
         assert operator._lifecycle == OperatorLifecycle.success
         assert not operator.ready(0, {})
 
@@ -37,13 +35,11 @@ class TestClass:
 
         assert operator.ready(0, {})
         assert operator._lifecycle == OperatorLifecycle.no_status
-        assert cb.func_1_times_called == 1
-        assert cb.func_1_last_value == 0
+        assert cb.func_1_calls == [0]
 
-        operator.run(0)
+        operator.execute(0)
 
-        assert cb.func_1_times_called == 2
-        assert cb.func_1_last_value == 'asd'
+        assert cb.func_1_calls == [0, 'asd']
         assert operator._lifecycle == OperatorLifecycle.success
         assert not operator.ready(0, {})
 
@@ -58,13 +54,11 @@ class TestClass:
 
         assert operator.ready(0, {})
         assert operator._lifecycle == OperatorLifecycle.no_status
-        assert cb.func_1_times_called == 2
-        assert cb.func_1_last_value == 'asd'
+        assert cb.func_1_calls == [0, 'asd']
 
-        operator.run(0)
+        operator.execute(0)
 
-        assert cb.func_1_times_called == 3
-        assert cb.func_1_last_value == station
+        assert cb.func_1_calls == [0, 'asd', station]
         assert operator._lifecycle == OperatorLifecycle.success
         assert not operator.ready(0, {})
 
@@ -78,13 +72,11 @@ class TestClass:
 
         assert operator.ready(0, {})
         assert operator._lifecycle == OperatorLifecycle.no_status
-        assert cb.func_1_times_called == 3
-        assert cb.func_1_last_value == station
+        assert cb.func_1_calls == [0, 'asd', station]
 
-        operator.run(0)
+        operator.execute(0)
 
-        assert cb.func_1_times_called == 4
-        assert cb.func_1_last_value == {'a': 'b'}
+        assert cb.func_1_calls == [0, 'asd', station, {'a': 'b'}]
         assert operator._lifecycle == OperatorLifecycle.success
         assert not operator.ready(0, {})
 
@@ -120,14 +112,30 @@ class TestClass:
                 operator_id='op_1',
                 python_callable=lambda it, st, cxt, args: cb.test_func_1(it))
 
-        assert str(excinfo.value
-                   ) == 'Operator op_1 must have schedule or upstream'
+        assert str(
+            excinfo.value) == 'Operator op_1 must have schedule or upstream'
+
+        with pytest.raises(MambaFlowException) as excinfo:
+            PythonOperator(operator_id='op_1',
+                           schedule=0,
+                           python_callable='text')
+
+        assert str(excinfo.value) == '"python_callable" param must be callable'
 
         with pytest.raises(MambaFlowException) as excinfo:
             PythonOperator(
                 operator_id='op_1',
-                schedule=0,
-                python_callable='text')
+                schedule='0',
+                python_callable=lambda it, st, cxt, args: cb.test_func_1(it))
 
         assert str(excinfo.value
-                   ) == '"python_callable" param must be callable'
+                   ) == 'Operator op_1 schedule must be a positive integer'
+
+        with pytest.raises(MambaFlowException) as excinfo:
+            PythonOperator(
+                operator_id='op_1',
+                schedule=-1,
+                python_callable=lambda it, st, cxt, args: cb.test_func_1(it))
+
+        assert str(excinfo.value
+                   ) == 'Operator op_1 schedule must be a positive integer'

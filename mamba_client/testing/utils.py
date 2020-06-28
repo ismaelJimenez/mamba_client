@@ -1,18 +1,14 @@
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 
 class CallbackTestClass:
     """ Common class to test Subject callbacks """
     def __init__(self) -> None:
-        self.func_1_times_called = 0
-        self.func_1_last_value = None
-        self.func_2_times_called = 0
-        self.func_2_last_value = None
+        self.func_1_calls: List[Any] = []
+        self.func_2_calls: List[Any] = []
 
-    def test_func_1(self, rx_on_next: Optional[Any] = None):
-        self.func_1_times_called += 1
-        self.func_1_last_value = rx_on_next
+    def test_func_1(self, value: Optional[Any] = None) -> None:
+        self.func_1_calls.append(value)
 
-    def test_func_2(self, rx_on_next: Optional[Any] = None):
-        self.func_2_times_called += 1
-        self.func_2_last_value = rx_on_next
+    def test_func_2(self, value: Optional[Any] = None) -> None:
+        self.func_2_calls.append(value)
