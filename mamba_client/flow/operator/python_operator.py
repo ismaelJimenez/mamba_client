@@ -12,17 +12,22 @@ class PythonOperator:
                  operator_id: Union[str, int],
                  python_callable: Callable,
                  schedule: Optional[int] = None,
+                 schedule_ts: Optional[int] = None,
                  upstream: Optional[str] = None,
                  context: Optional[Dict] = None,
                  station: Optional[Station] = None,
                  op_args: Optional[Any] = None,
                  description: str = '',
                  log: Optional[Callable] = None) -> None:
-        if upstream is not None and schedule is not None:
+        if upstream is not None and (schedule is not None or schedule_ts is not None):
             raise MambaFlowException(
                 f'Operator {operator_id} can not have schedule and upstream')
 
-        if upstream is None and schedule is None:
+        if schedule is not None and schedule_ts is not None:
+            raise MambaFlowException(
+                f'Operator {operator_id} can not have schedule and schedule_ts')
+
+        if upstream is None and schedule is None and schedule_ts is None:
             raise MambaFlowException(
                 f'Operator {operator_id} must have schedule or upstream')
 
@@ -30,6 +35,11 @@ class PythonOperator:
                                      or schedule < 0):
             raise MambaFlowException(
                 f'Operator {operator_id} schedule must be a positive integer')
+
+        if schedule_ts is not None and (not isinstance(schedule_ts, int)
+                                        or schedule_ts < 0):
+            raise MambaFlowException(
+                f'Operator {operator_id} schedule_ts must be a positive integer')
 
         if not callable(python_callable):
             raise MambaFlowException(
@@ -40,11 +50,13 @@ class PythonOperator:
             raise MambaFlowException(
                 f'Operator {operator_id} log param must be callable')
 
+        self._t0 = time.time()
         self._operator_id = str(operator_id)
         self._callable = python_callable
         self._context = context
         self._station = station
         self._schedule = schedule
+        self._schedule_ts = schedule_ts
         self._upstream = upstream
         self._description = description
         self._op_args = op_args
@@ -71,9 +83,13 @@ class PythonOperator:
         if self._upstream is not None:
             return operators_lifecycle.get(
                 self._upstream) == OperatorLifecycle.success
-        else:
+        elif self._schedule is not None:
             return self._schedule <= iteration if self._schedule is not None\
                 else False
+        elif self._schedule_ts is not None:
+            return self._schedule_ts <= (time.time() - self._t0)
+        else:
+            return False
 
     def execute(self, iteration: int) -> OperatorLifecycle:
         if self._log is not None:

@@ -7,17 +7,17 @@ from mamba_client.flow.exceptions import MambaFlowException
 
 class FlowController:
     def __init__(self,
-                 iterations: int,
+                 time_ticks: int,
                  log: Optional[Callable] = None) -> None:
         if log is not None and not callable(log):
             raise MambaFlowException(
                 f'FlowController log param must be callable')
 
-        if not isinstance(iterations, int) or iterations < 0:
+        if not isinstance(time_ticks, int) or time_ticks < 0:
             raise MambaFlowException(
-                f'FlowController iterations must be a positive integer')
+                f'FlowController time_ticks must be a positive integer')
 
-        self._iterations = iterations
+        self._time_ticks = time_ticks
         self._operator_list: List[Union[PythonOperator,
                                         CyclicPythonOperator]] = []
         self._operator_lifecycle: Dict[str, OperatorLifecycle] = {}
@@ -32,43 +32,42 @@ class FlowController:
                 f'Operator {operator.id} is already defined')
 
         if operator._schedule is not None and \
-                operator._schedule > self._iterations - 1:
+                operator._schedule > self._time_ticks - 1:
             raise MambaFlowException(f'Operator {operator.id} schedule is '
-                                     f'greater than number of iterations: '
-                                     f'[0-{self._iterations -1}]')
+                                     f'greater than number of time_ticks: '
+                                     f'[0-{self._time_ticks - 1}]')
 
         self._operator_list.append(operator)
         self._operator_lifecycle[operator.id] = operator.status
 
         if operator.upstream is not None:
-            if operator.upstream not in self._operator_lifecycle:
-                raise MambaFlowException(f'Operator {operator.id} upstream '
-                                         f'{operator.upstream} does not '
-                                         f'exists')
-
             if operator.upstream not in self._operator_downstream:
                 self._operator_downstream[operator.upstream] = [operator]
             else:
                 self._operator_downstream[operator.upstream].append(operator)
 
+    def _operation_execute(self, task, time_tick, operator_downstream):
+        if task.ready(time_tick, self._operator_lifecycle):
+            self._operator_lifecycle[task.id] = task.execute(time_tick)
+
+            for operator in operator_downstream.get(task.id, []):
+                self._operation_execute(operator, time_tick, operator_downstream)
+
     def execute(self):
         if self._log is not None:
             self._log('Start Execution Flow')
 
-        for loop in range(self._iterations):
+        for time_tick in range(self._time_ticks):
             if self._log is not None:
-                self._log(f'Start iteration {loop}')
+                self._log(f'=== Start Time Tick: {time_tick}')
 
             for task in self._operator_list:
-                if task.ready(loop, self._operator_lifecycle):
-                    self._operator_lifecycle[task.id] = task.execute(loop)
-
-                    if self._operator_lifecycle[
-                            task.id] == OperatorLifecycle.success:
-                        if task.id in self._operator_downstream:
-                            for operator in self._operator_downstream[task.id]:
-                                self._operator_lifecycle[
-                                    operator.id] = operator.execute(loop)
+                self._operation_execute(task, time_tick, self._operator_downstream)
 
         if self._log is not None:
             self._log('Stop Execution Flow')
+
+        for task in self._operator_list:
+            if task._lifecycle == OperatorLifecycle.no_status:
+                if self._log is not None:
+                    self._log(f'WARNING: {task.id} has not been scheduled')

@@ -1,4 +1,5 @@
 import pytest
+import time
 
 from mamba_client.testing.utils import CallbackTestClass
 from mamba_client.flow.operator.lifecycle import OperatorLifecycle
@@ -97,6 +98,17 @@ class TestClass:
         assert not operator.ready(0, {})
         assert operator.ready(0, {'op_0': OperatorLifecycle.success})
 
+        operator = PythonOperator(
+            operator_id='op_1',
+            schedule_ts=3,
+            python_callable=lambda it, st, cxt, args: cb.test_func_1(it))
+
+        assert not operator.ready(0, {})
+        time.sleep(1)
+        assert not operator.ready(0, {})
+        time.sleep(2.1)
+        assert operator.ready(0, {})
+
         with pytest.raises(MambaFlowException) as excinfo:
             PythonOperator(
                 operator_id='op_1',
@@ -141,6 +153,24 @@ class TestClass:
         assert str(excinfo.value
                    ) == 'Operator op_1 schedule must be a positive integer'
 
+        with pytest.raises(MambaFlowException) as excinfo:
+            PythonOperator(
+                operator_id='op_1',
+                schedule_ts='0',
+                python_callable=lambda it, st, cxt, args: cb.test_func_1(it))
+
+        assert str(excinfo.value
+                   ) == 'Operator op_1 schedule_ts must be a positive integer'
+
+        with pytest.raises(MambaFlowException) as excinfo:
+            PythonOperator(
+                operator_id='op_1',
+                schedule_ts=-1,
+                python_callable=lambda it, st, cxt, args: cb.test_func_1(it))
+
+        assert str(excinfo.value
+                   ) == 'Operator op_1 schedule_ts must be a positive integer'
+
         operator = PythonOperator(
             operator_id='op_1',
             schedule=0,
@@ -161,3 +191,13 @@ class TestClass:
                 log='')
 
         assert str(excinfo.value) == 'Operator op_1 log param must be callable'
+
+        with pytest.raises(MambaFlowException) as excinfo:
+            PythonOperator(
+                operator_id='op_1',
+                schedule=0,
+                schedule_ts=0,
+                python_callable=lambda it, st, cxt, args: cb.test_func_1(it),
+                log='')
+
+        assert str(excinfo.value) == 'Operator op_1 can not have schedule and schedule_ts'
