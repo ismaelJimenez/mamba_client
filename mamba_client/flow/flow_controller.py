@@ -51,7 +51,8 @@ class FlowController:
             self._operator_lifecycle[task.id] = task.execute(time_tick)
 
             for operator in operator_downstream.get(task.id, []):
-                self._operation_execute(operator, time_tick, operator_downstream)
+                self._operation_execute(operator, time_tick,
+                                        operator_downstream)
 
     def execute(self):
         if self._log is not None:
@@ -62,7 +63,8 @@ class FlowController:
                 self._log(f'=== Start Time Tick: {time_tick}')
 
             for task in self._operator_list:
-                self._operation_execute(task, time_tick, self._operator_downstream)
+                self._operation_execute(task, time_tick,
+                                        self._operator_downstream)
 
         if self._log is not None:
             self._log('Stop Execution Flow')

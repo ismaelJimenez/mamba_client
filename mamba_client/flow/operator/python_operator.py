@@ -19,13 +19,15 @@ class PythonOperator:
                  op_args: Optional[Any] = None,
                  description: str = '',
                  log: Optional[Callable] = None) -> None:
-        if upstream is not None and (schedule is not None or schedule_ts is not None):
+        if upstream is not None and (schedule is not None
+                                     or schedule_ts is not None):
             raise MambaFlowException(
                 f'Operator {operator_id} can not have schedule and upstream')
 
         if schedule is not None and schedule_ts is not None:
             raise MambaFlowException(
-                f'Operator {operator_id} can not have schedule and schedule_ts')
+                f'Operator {operator_id} can not have schedule and schedule_ts'
+            )
 
         if upstream is None and schedule is None and schedule_ts is None:
             raise MambaFlowException(
@@ -39,7 +41,9 @@ class PythonOperator:
         if schedule_ts is not None and (not isinstance(schedule_ts, int)
                                         or schedule_ts < 0):
             raise MambaFlowException(
-                f'Operator {operator_id} schedule_ts must be a positive integer')
+                f'Operator {operator_id} schedule_ts must be a positive '
+                f'integer'
+            )
 
         if not callable(python_callable):
             raise MambaFlowException(

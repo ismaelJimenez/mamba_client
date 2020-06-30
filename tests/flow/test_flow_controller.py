@@ -25,9 +25,10 @@ class TestClass:
                            test_func_1(f'{it} - op_1')))
 
         ctrl.add(
-            PythonOperator(operator_id='op_12',
-                           schedule=1,
-                           python_callable=lambda it, st, cxt, args: time.sleep(2.1)))
+            PythonOperator(
+                operator_id='op_12',
+                schedule=1,
+                python_callable=lambda it, st, cxt, args: time.sleep(2.1)))
 
         ctrl.add(
             PythonOperator(operator_id='op_11',
@@ -77,26 +78,21 @@ class TestClass:
         ctrl.execute()
 
         assert cb.func_1_calls == [
-            '0 - op_1', '0 - op_4',  '1 - op_11', '1 - op_3', '1 - op_4',
+            '0 - op_1', '0 - op_4', '1 - op_11', '1 - op_3', '1 - op_4',
             '2 - op_4', '3 - op_3', '3 - op_4', '4 - op_4', '5 - op_3',
             '5 - op_4', '7 - op_3', '9 - op_2', '9 - op_5', '9 - op_6',
             '9 - op_3'
         ]
 
         assert cb.func_2_calls == [
-            'Start Execution Flow',
-            '=== Start Time Tick: 0',
-            '=== Start Time Tick: 1',
-            '=== Start Time Tick: 2',
-            '=== Start Time Tick: 3',
-            '=== Start Time Tick: 4',
-            '=== Start Time Tick: 5',
-            '=== Start Time Tick: 6',
-            '=== Start Time Tick: 7',
-            '=== Start Time Tick: 8',
-            '=== Start Time Tick: 9',
-            'Stop Execution Flow',
-            'WARNING: op_7 has not been scheduled']
+            'Start Execution Flow', '=== Start Time Tick: 0',
+            '=== Start Time Tick: 1', '=== Start Time Tick: 2',
+            '=== Start Time Tick: 3', '=== Start Time Tick: 4',
+            '=== Start Time Tick: 5', '=== Start Time Tick: 6',
+            '=== Start Time Tick: 7', '=== Start Time Tick: 8',
+            '=== Start Time Tick: 9', 'Stop Execution Flow',
+            'WARNING: op_7 has not been scheduled'
+        ]
 
         with pytest.raises(MambaFlowException) as excinfo:
             ctrl.add(

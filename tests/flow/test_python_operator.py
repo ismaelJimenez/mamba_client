@@ -200,4 +200,5 @@ class TestClass:
                 python_callable=lambda it, st, cxt, args: cb.test_func_1(it),
                 log='')
 
-        assert str(excinfo.value) == 'Operator op_1 can not have schedule and schedule_ts'
+        assert str(excinfo.value
+                   ) == 'Operator op_1 can not have schedule and schedule_ts'
