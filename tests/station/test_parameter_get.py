@@ -32,3 +32,48 @@ class TestClass:
         assert '> OK test_1;' in mock._shared_memory['last_tm']
         assert ';1;1;0;1' in mock._shared_memory['last_tm']
         assert reply == '1'
+
+        parameter_get = ParameterGet(network_controller=network_controller,
+                                     parameter_id='test_1',
+                                     parameter_type='int')
+
+        assert mock._shared_memory['last_tc'] == 'tm_meta test_1'
+        assert mock._shared_memory[
+            'last_tm'] == '> OK test_1;str;str;test description;7;4'
+
+        reply = parameter_get()
+
+        assert mock._shared_memory['last_tc'] == 'tm test_1'
+        assert '> OK test_1;' in mock._shared_memory['last_tm']
+        assert ';1;1;0;1' in mock._shared_memory['last_tm']
+        assert reply == 1
+
+        parameter_get = ParameterGet(network_controller=network_controller,
+                                     parameter_id='test_10',
+                                     parameter_type='hex')
+
+        assert mock._shared_memory['last_tc'] == 'tm_meta test_10'
+        assert mock._shared_memory[
+            'last_tm'] == '> OK test_10;str;str;test description;7;4'
+
+        reply = parameter_get()
+
+        assert mock._shared_memory['last_tc'] == 'tm test_10'
+        assert '> OK test_10;' in mock._shared_memory['last_tm']
+        assert ';10;10;0;1' in mock._shared_memory['last_tm']
+        assert reply == 16
+
+        parameter_get = ParameterGet(network_controller=network_controller,
+                                     parameter_id='test_10',
+                                     parameter_type='float')
+
+        assert mock._shared_memory['last_tc'] == 'tm_meta test_10'
+        assert mock._shared_memory[
+            'last_tm'] == '> OK test_10;str;str;test description;7;4'
+
+        reply = parameter_get()
+
+        assert mock._shared_memory['last_tc'] == 'tm test_10'
+        assert '> OK test_10;' in mock._shared_memory['last_tm']
+        assert ';10;10;0;1' in mock._shared_memory['last_tm']
+        assert reply == 10.0

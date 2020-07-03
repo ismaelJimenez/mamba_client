@@ -156,4 +156,17 @@ class TestClass:
         assert mock._shared_memory['last_tc'] == 'tc inst_1_test_2 "2"'
         assert mock._shared_memory['last_tm'] == '> OK inst_1_test_2'
 
+        inst.add_parameter(parameter_id='test_3', parameter_get_type='int')
+
+        assert mock._shared_memory['last_tc'] == 'tc_meta inst_1_test_3'
+        assert mock._shared_memory[
+            'last_tm'] == '> OK inst_1_test_3;1;test description'
+
+        reply = inst.test_3.get()
+
+        assert mock._shared_memory['last_tc'] == 'tm inst_1_test_3'
+        assert '> OK inst_1_test_3;' in mock._shared_memory['last_tm']
+        assert ';1;1;0;1' in mock._shared_memory['last_tm']
+        assert reply == 1
+
         network_controller.close()

@@ -42,8 +42,7 @@ class PythonOperator:
                                         or schedule_ts < 0):
             raise MambaFlowException(
                 f'Operator {operator_id} schedule_ts must be a positive '
-                f'integer'
-            )
+                f'integer')
 
         if not callable(python_callable):
             raise MambaFlowException(

@@ -60,7 +60,9 @@ class ThreadedTcpHandler(socketserver.BaseRequestHandler):
                             f';7;4'
 
                 elif data_split[0] == 'tm':
-                    reply = f"> OK {data_split[1]};{time.time()};1;1;0;1"
+                    reply = f"> OK {data_split[1]};{time.time()};" \
+                            f"{int(data_split[1].split('_')[1])};" \
+                            f"{int(data_split[1].split('_')[1])};0;1"
 
             self.server.shared_memory['last_tm'] = reply
             self.request.sendall(f'{reply}{eom}'.encode('ascii'))

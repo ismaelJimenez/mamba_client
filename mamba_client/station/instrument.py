@@ -25,6 +25,7 @@ class Instrument:
 
     def add_parameter(self,
                       parameter_id: str,
+                      parameter_get_type: str = 'str',
                       get_alias: Optional[str] = None,
                       set_alias: Optional[str] = None,
                       set_arg_1: Optional[Any] = None,
@@ -49,6 +50,7 @@ class Instrument:
         self._parameters[parameter_id] = Parameter(
             parameter_id=parameter_id,
             network_controller=self._network_controller,
+            parameter_get_type=parameter_get_type,
             get_alias=get_alias,
             set_alias=set_alias,
             set_arg_1=set_arg_1,
@@ -64,6 +66,7 @@ class Instrument:
 
     def add_get_parameter(self,
                           parameter_id: str,
+                          parameter_get_type: str = 'str',
                           get_alias: Optional[str] = None) -> None:
         if parameter_id in self._parameters:
             raise KeyError(f'Duplicate parameter name {parameter_id}')
@@ -74,6 +77,7 @@ class Instrument:
         self._parameters[parameter_id] = Parameter(
             parameter_id=parameter_id,
             network_controller=self._network_controller,
+            parameter_get_type=parameter_get_type,
             get_alias=get_alias,
             set_alias=None)
 

@@ -86,8 +86,8 @@ class TestClass:
 
         assert mock._shared_memory['last_tc'] == 'tm test_2_get'
         assert '> OK test_2_get;' in mock._shared_memory['last_tm']
-        assert ';1;1;0;1' in mock._shared_memory['last_tm']
-        assert reply == '1'
+        assert ';2;2;0;1' in mock._shared_memory['last_tm']
+        assert reply == '2'
 
         param.set(1)
 
@@ -118,5 +118,47 @@ class TestClass:
 
         assert mock._shared_memory['last_tc'] == 'tc test_1_set "1"'
         assert mock._shared_memory['last_tm'] == '> OK test_1_set'
+
+        param = Parameter(parameter_id='test_1',
+                          network_controller=network_controller,
+                          parameter_get_type='int',
+                          get_alias='test_1_get',
+                          set_alias='test_1_set',
+                          set_arg_1=1)
+
+        reply = param.get()
+
+        assert mock._shared_memory['last_tc'] == 'tm test_1_get'
+        assert '> OK test_1_get;' in mock._shared_memory['last_tm']
+        assert ';1;1;0;1' in mock._shared_memory['last_tm']
+        assert reply == 1
+
+        param = Parameter(parameter_id='test_10',
+                          network_controller=network_controller,
+                          parameter_get_type='hex',
+                          get_alias='test_10_get',
+                          set_alias='test_10_set',
+                          set_arg_1=1)
+
+        reply = param.get()
+
+        assert mock._shared_memory['last_tc'] == 'tm test_10_get'
+        assert '> OK test_10_get;' in mock._shared_memory['last_tm']
+        assert ';10;10;0;1' in mock._shared_memory['last_tm']
+        assert reply == 16
+
+        param = Parameter(parameter_id='test_10',
+                          network_controller=network_controller,
+                          parameter_get_type='float',
+                          get_alias='test_10_get',
+                          set_alias='test_10_set',
+                          set_arg_1=1)
+
+        reply = param.get()
+
+        assert mock._shared_memory['last_tc'] == 'tm test_10_get'
+        assert '> OK test_10_get;' in mock._shared_memory['last_tm']
+        assert ';10;10;0;1' in mock._shared_memory['last_tm']
+        assert 10.0 <= reply <= 10.2
 
         network_controller.close()

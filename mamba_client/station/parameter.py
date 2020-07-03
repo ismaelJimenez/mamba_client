@@ -7,6 +7,7 @@ class Parameter:
     def __init__(self,
                  parameter_id: str,
                  network_controller: NetworkController,
+                 parameter_get_type: str = 'str',
                  get_alias: Optional[str] = None,
                  set_alias: Optional[str] = None,
                  set_arg_1: Optional[Any] = None,
@@ -20,8 +21,9 @@ class Parameter:
                  set_arg_9: Optional[Any] = None,
                  set_arg_10: Optional[Any] = None) -> None:
         self._parameter_id = parameter_id
-        self._get = ParameterGet(network_controller,
-                                 get_alias) if get_alias is not None else None
+        self._get = ParameterGet(
+            network_controller, get_alias,
+            parameter_get_type) if get_alias is not None else None
         self._set = ParameterSet(
             network_controller,
             set_alias,
