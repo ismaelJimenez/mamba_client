@@ -4,31 +4,14 @@
 Getting Started with Mamba Client
 =================================
 
-Install
-=======
-
-Mamba-Server runs on `Python <http://www.python.org/>`__ 3. To install Mamba-Server:
-
-.. code:: console
-
-    pip3 install mamba-server
-
-Test mamba has been properly installed by running:
-
-.. code:: console
-
-    mamba --version
-
-Make sure the latest version of the Mamba Server is installed.
-
-Create a new Mamba Server Project
+Create a new Mamba Client Project
 =================================
 
-Next start a new Mamba Server Project
+Start a new Mamba Client Project, by creating a new folder. E.g. on Unix or MacOS
 
 .. code:: console
 
-    mamba start my_mamba_server
+    mkdir my_mamba_client
 
 Then go the the newly created directory and initialize the Mamba Environment:
 
@@ -49,39 +32,51 @@ On Unix or MacOS, run:
 
     source venv/bin/activate
 
-Then, install the project requirements:
+Then, install Mamba Client:
 
 .. code:: console
 
-    pip install -r requirements.txt
+    pip install mamba-client
+
 
 Set Up an Editor
 ================
-You can build a Mamba Server application using any text editor combined with the Mamba command-line tools.
+You can build a Mamba Client application using any text editor combined with the Mamba command-line tools.
 
 Follow the steps below to get the set by step procedure to set-up the most common code editors: PyCharm or VS Code. If you want to use a different editor, that’s OK, skip ahead to the next chapter.
 
-- `Set Up PyCharm for Mamba Server App Development <https://mamba-server.readthedocs.io/en/latest/set_up_pycharm.html>`__
-- `Set Up Visual Code for Mamba Server App Development <https://mamba-server.readthedocs.io/en/latest/set_up_vscode.html>`__
+- `Set Up PyCharm for Mamba Client App Development <https://mamba-client.readthedocs.io/en/latest/set_up_pycharm.html>`__
+- `Set Up Visual Code for Mamba Client App Development <https://mamba-client.readthedocs.io/en/latest/set_up_vscode.html>`__
 
-Create your first component
-===========================
-In the command line, go to the project root and type
+Create your first Mamba Client Application
+==========================================
+First of all, start a default Mamba server as described in https://mamba-server.readthedocs.io/en/latest/getting_started.html
 
-.. code:: console
+Create a new python file called my_client.py, and add the following content:
 
-    mamba generate visa_instrument_driver new_custom_visa_driver
+.. code:: python
 
-Now, in the "component" folder a new component "new_custom_visa_driver" has been created.
+    from mamba_client.station import Station, NetworkController
 
-To use the newly create controller, you will have to add it to the project-compose.yml, with:
+    network_controller_1 = NetworkController(host='127.0.0.1', port=8080)
+    station = Station(station_id='station_1')
 
-.. code:: yaml
+    station.add_instrument(instrument_id='signal_generator',
+                           network_controller=network_controller_1)
 
-    services:
-        custom_controller
-            component: new_custom_visa_driver
+    station.signal_generator.add_set_parameter(parameter_id='connect')
+    station.signal_generator.add_get_parameter(parameter_id='connected')
+    station.signal_generator.add_get_parameter(parameter_id='idn')
 
-Run again the Mamba Server application, and check that you new component is available, in the "Parameter Setter" window.
+    station.signal_generator.connect.set(1)
 
-Now you are ready to create you own Mamba Server Application. You can use the standard components from mamba-server or create your own ones and add them to the project-compose.yml.
+    print(f'Connection status: {station.signal_generator.connected.get()}')
+    print(f'Instrument ID: {station.signal_generator.idn.get()}')
+
+    station.signal_generator.connect.set(0)
+
+    print(f'Connection status: {station.signal_generator.connected.get()}')
+
+In this example NetworkController establish the connection to the Mamba Server. Then then instrument "signal_generator" is added to the station. And afterwards 3 properties are added to the instrument.
+
+Now you are ready to create you own Mamba Client Application.
