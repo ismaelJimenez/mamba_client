@@ -32,15 +32,22 @@ The next image shows an architectural example of a testbed implemented with the 
 
 Where each Mamba Server can run in the same or different computers and be located in the same building or in different countries.
 
-Overview
-===========
-Client libraries for Mamba Server
+
+Mamba Client Overview
+=====================
+
+Mamba Client is a library for the development of Ground Test Equipment Controllers. The Mamba Client library is implemented in Python and allows the commanding of multiple Mamba Servers concurrently. 
+
+While it has been developed to serve the needs of spacecraft equipment test applications, it can also be used in any other kind of project that require the control of different test equipments, like a physics experiment laboratory or in the Automotion industry.
+
+Although the projects where Mamba is deployed usually are composed of dozens of different distributed ground equipments, it is also a perfect fit a an small project composed only by a handful of instruments controlled by one single computer.
+
 
 Requirements
-============
+------------
 
 * Python 3.6+
-* Works on Linux, Windows, macOS, BSD
+* Works on Linux, Windows and macOS
 
 Install
 =======
@@ -48,3 +55,15 @@ Install
 The quick way::
 
     pip install mamba-client
+
+
+Documentation
+=============
+
+Documentation is available online at https://mamba-client.readthedocs.io and in the ``docs``
+directory.
+
+License
+=======
+
+See `License <https://github.com/mamba-framework/mamba-client/blob/master/LICENSE>`__.
